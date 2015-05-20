@@ -9,7 +9,7 @@ module BundledUi
     def open
       spec = Bundler.definition.specs[params[:gem]].first
       if spec
-        system( "sublime #{spec.gem_dir}/")
+        system( "subl #{spec.gem_dir}/ || sublime #{spec.gem_dir}/")
       end
 
       redirect_to :root
