@@ -7,24 +7,40 @@
 
   <% @specs.each do |spec| %>
     <tr>
-      <td><%= link_to "#{spec.name} #{spec.version}", spec.homepage %></td>
-      <td><%= link_to spec.summary, open_path( :gem => spec.name ) %></td>
       <td>
-        <ul>
-          <% spec.dependencies.each do |dep| 
-            spec = Bundler.definition.specs[dep.name].first
-            %>
-            <li>
-              <% if spec %>
-                <%= link_to dep.name, spec.homepage %>
-              <% else %>
-                <%= dep.name %>
+        <%= link_to "#{spec.name} #{spec.version}", spec.homepage %><br/>
+        <img src="https://badge.fury.io/rb/<%= spec.name %>.svg"/>
+      </td>
+      <td><%= link_to spec.summary, open_path( :gem => spec.name ), "data-title": spec.description, "data-toggle": "tooltip", "data-placement": "bottom" %></td>
+      <td>
+        <% if spec.dependencies.size > 0 %>
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+              Dependencies
+              <span class="caret"></span>
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <% spec.dependencies.each do |dep| 
+                spec = Bundler.definition.specs[dep.name].first
+                %>
+                <li class="<%= spec.nil? ? 'disabled' : '' %>">
+                  <% if spec %>
+                    <%= link_to "#{dep.name} (#{dep.type}) #{dep.requirements_list.join( ", ")}", spec.homepage, "data-title": spec.description, "data-toggle": "tooltip", "data-placement": " auto" %>
+                  <% else %>
+                    <%= link_to dep.name, "#" %>
+                  <% end %>
+                </li>
               <% end %>
-              <%= "(#{dep.type}) #{dep.requirements_list.join( ", ")}" %>
-            </li>
-          <% end %>
-        </ul>
+            </ul>
+          </div>
+        <% end %>
       </td>
     </tr>
   <% end %>
 </table>
+<script>
+$( function() {
+  $('[data-toggle="tooltip"]').tooltip();  
+});
+</script>
